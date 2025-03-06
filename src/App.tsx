@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import StatusBar from "./components/StatusBar";
 import { Client } from "./types";
 import { FileSpreadsheet } from "lucide-react";
+import WhatsAppLogin from "./components/WhatsAppLogin";
 
 function App() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -28,6 +29,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
+      <WhatsAppLogin />
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {status && (
