@@ -6,6 +6,7 @@ import StatusBar from "./components/StatusBar";
 import { Client } from "./types";
 import { FileSpreadsheet } from "lucide-react";
 import WhatsAppLogin from "./components/WhatsAppLogin";
+import Footer from "./components/Footer";
 
 function App() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -69,13 +70,7 @@ function App() {
         )}
       </main>
 
-      <footer className="bg-white mt-12 py-6 border-t border-gray-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
-            WhatsApp Messaging Automation System © {new Date().getFullYear()}
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
