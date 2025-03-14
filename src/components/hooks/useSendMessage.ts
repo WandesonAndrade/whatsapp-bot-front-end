@@ -37,7 +37,7 @@ const useSendMessage = () => {
 
     try {
       const response = await axios.post<SendMessageResponse>(
-        "http://localhost:3000/send-message",
+        "http://localhost:3000/whatsapp/send-message",
         {
           number: cleanedPhoneNumber,
           message: messages[client.id],

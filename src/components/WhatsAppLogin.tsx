@@ -1,19 +1,19 @@
-// src/components/WhatsAppLogin.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const WhatsAppLogin: React.FC = () => {
-  const [qrCode, setQrCode] = useState<string | null>(null);
+const WhatsAppLogin = () => {
+  const [qr, setQrCode] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("Aguardando conexão...");
 
   // Função para buscar o QR Code do backend
   const fetchQRCode = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/qr");
+      const response = await axios.get("http://localhost:3000/whatsapp/qr");
+      console.log("Resposta do backend:", response.data);
       setQrCode(response.data.qr); // Atualiza o estado com o QR code
       setStatus("Escaneie o código para se conectar!");
     } catch (error) {
-      console.error("Erro ao carregar o QR Code:", error);
+      console.error("Erro ao carregar QR Code:", error);
       setStatus("Erro ao carregar QR Code.");
     }
   };
@@ -28,9 +28,9 @@ const WhatsAppLogin: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
           Escaneie o QR Code para se conectar ao WhatsApp
         </h2>
-        {qrCode ? (
+        {qr ? (
           <img
-            src={qrCode}
+            src={`${qr}`}
             alt="QR Code"
             className="w-full h-auto border border-gray-300 mt-4"
           />

@@ -44,7 +44,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ clients }) => {
 
     try {
       const response = await axios.post<SendMessageResponse>(
-        "http://localhost:3000/send-message",
+        "http://localhost:3000/whatsapp/send-message",
         {
           number: cleanedPhoneNumber,
           message: messages[client.id],
@@ -67,7 +67,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ clients }) => {
     for (let i = 0; i < clients.length; i++) {
       await handleSendMessage(clients[i]);
       if (i < clients.length - 1) {
-        // Aguarda 2 segundos antes de enviar para o próximo cliente
+        // Aguarda 3 segundos antes de enviar para o próximo cliente
         await new Promise((resolve) => setTimeout(resolve, 3000));
       }
     }
