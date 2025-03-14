@@ -12,6 +12,7 @@ const WhatsAppLogin = () => {
       const response = await axios.get("http://localhost:3000/whatsapp/status");
       if (response.data.conectado) {
         setIsConnected(true);
+        setQrCode(null);
         setStatus("WhatsApp já está conectado!");
       } else {
         setIsConnected(false);
@@ -35,8 +36,22 @@ const WhatsAppLogin = () => {
     }
   };
 
+  // Função para capturar os status do Venom
+  const getVenomStatus = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/whatsapp/venom-status"
+      );
+      setStatus(response.data.status || "Aguardando status...");
+    } catch (error) {
+      console.error("Erro ao obter status do Venom:", error);
+    }
+  };
+
   useEffect(() => {
     checkConnectionStatus();
+    const statusInterval = setInterval(getVenomStatus, 2000); // Atualiza a cada 5 segundos
+    return () => clearInterval(statusInterval);
   }, []);
 
   return (
