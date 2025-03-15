@@ -5,21 +5,37 @@ const WhatsAppLogin = () => {
   const [qr, setQrCode] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("Verificando conexão...");
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Aguarda conexão após ler o QR
 
-  // Função para verificar o status da conexão
-  const checkConnectionStatus = async () => {
+  // Função para capturar os status do Venom
+  const getVenomStatus = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/whatsapp/status");
-      if (response.data.conectado) {
+      const response = await axios.get(
+        "http://localhost:3000/whatsapp/bot-status"
+      );
+
+      const venomStatus = response.data.status;
+      console.log("📌 Status do Venom:", venomStatus);
+
+      if (venomStatus === "Conectado ao WhatsApp!") {
         setIsConnected(true);
         setQrCode(null);
-        setStatus("WhatsApp já está conectado!");
-      } else {
+        setStatus("WhatsApp conectado!");
+        setIsLoading(false);
+      } else if (venomStatus === "qrReadSuccess") {
+        setIsLoading(true);
+        setStatus("QR escaneado! Aguardando conexão...");
+      } else if (["waitForLogin", "waitChat"].includes(venomStatus)) {
+        setIsLoading(true);
+        setStatus("Aguardando login...");
+      } else if (venomStatus === "notLogged") {
         setIsConnected(false);
+        setIsLoading(false);
+        setStatus("Aguardando QR Code...");
         fetchQRCode();
       }
     } catch (error) {
-      console.error("Erro ao verificar status do WhatsApp:", error);
+      console.error("Erro ao obter status do Venom:", error);
       setStatus("Erro ao verificar conexão.");
     }
   };
@@ -36,21 +52,9 @@ const WhatsAppLogin = () => {
     }
   };
 
-  // Função para capturar os status do Venom
-  const getVenomStatus = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:3000/whatsapp/venom-status"
-      );
-      setStatus(response.data.status || "Aguardando status...");
-    } catch (error) {
-      console.error("Erro ao obter status do Venom:", error);
-    }
-  };
-
   useEffect(() => {
-    checkConnectionStatus();
-    const statusInterval = setInterval(getVenomStatus, 2000); // Atualiza a cada 5 segundos
+    getVenomStatus();
+    const statusInterval = setInterval(getVenomStatus, 3000); // Atualiza a cada 3 segundos
     return () => clearInterval(statusInterval);
   }, []);
 
@@ -60,12 +64,19 @@ const WhatsAppLogin = () => {
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
           {isConnected
             ? "WhatsApp Conectado"
+            : isLoading
+            ? "Aguardando conexão..."
             : "Escaneie o QR Code para se conectar"}
         </h2>
+
         {isConnected ? (
           <p className="text-green-600 font-semibold">
             ✅ Conectado ao WhatsApp
           </p>
+        ) : isLoading ? (
+          <div className="flex justify-center items-center">
+            <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+          </div>
         ) : qr ? (
           <img
             src={qr}
@@ -75,6 +86,7 @@ const WhatsAppLogin = () => {
         ) : (
           <p className="text-gray-500">Carregando QR Code...</p>
         )}
+
         <p className="mt-4 text-gray-600">{status}</p>
       </div>
     </div>
